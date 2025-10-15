@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import { useState } from 'react';
 
 export default function App() {
@@ -8,7 +9,18 @@ export default function App() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log({ shopName, genre, rating, comment });
+        const newData = { shopName, genre, rating, comment };
+
+        const exisitingData = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
+
+        const updated = [...exisitingData, newData];
+        localStorage.setItem('meshiMoryData', JSON.stringify(updated));
+
+        setShopName('');
+        setGenre('');
+        setRating(3);
+        setComment('');
+        alert('記録しました！');
     };
 
     return (
