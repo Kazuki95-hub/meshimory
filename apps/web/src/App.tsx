@@ -35,7 +35,7 @@ export default function App() {
         alert('記録しました！');
     };
 
-    const handledelete = (index: number) => {
+    const handleDelete = (index: number) => {
         const isConfirmed = window.confirm("この記録を削除しますか？");
 
         if (!isConfirmed) return;
@@ -44,6 +44,12 @@ export default function App() {
         setRecords(upated);
     }
 
+    const groupedRecords = records.reduce((groups: any, record) => {
+        const date = record.date || "日付なし";
+        if (!groups[date]) groups[date] = [];
+        groups[date].push(record);
+        return groups;
+    }, {});
     return (
         <main style={{ maxWidth: "500px", margin: "3rem auto", textAlign: "center" }}>
             <h1>MeshiMory 🍜</h1>
@@ -81,41 +87,44 @@ export default function App() {
             {/* 🧾 一覧表示 */}
             <section>
                 <h2>これまでの記録</h2>
-                {records.length === 0 ? (
-                    <p>まだ記録がありません</p>
-                ) : (
-                    records.map((r, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                border: "1px solid #ddd",
-                                borderRadius: "8px",
-                                padding: "1rem",
-                                marginBottom: "1rem",
-                                textAlign: "left",
-                            }}
-                        >
-                            <h3>
-                                🍽️ {r.shopName}（{r.genre || "ジャンル未設定"}）
-                            </h3>
-                            <p>⭐ {r.rating}/5</p>
-                            {r.comment && <p>{r.comment}</p>}
-                            <p>📅 {r.date || "日付なし"}</p>
-                            <button onClick={() => handledelete(i)}
-                                style={{
-                                    background: "#ff4d4f",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    padding: "0.3rem 0.6rem",
-                                    cursor: "pointer",
-                                    marginTop: "0.5rem",
-                                }}>
-                                削除
-                            </button>
+                {Object.keys(groupedRecords)
+                    .sort((a, b) => (a < b ? 1 : -1)) // 新しい日付が上にくるようにソート
+                    .map((date) => (
+                        <div key={date}>
+                            <h2 style={{ marginTop: "2rem", color: "#444" }}>📅 {date}</h2>
+
+                            {groupedRecords[date].map((r: any, i: number) => (
+                                <div
+                                    key={i}
+                                    style={{
+                                        border: "1px solid #ddd",
+                                        borderRadius: "8px",
+                                        padding: "1rem",
+                                        marginBottom: "1rem",
+                                        textAlign: "left",
+                                    }}
+                                >
+                                    <h3>🍽️ {r.shopName}（{r.genre || "ジャンル未設定"}）</h3>
+                                    <p>⭐ {r.rating}/5</p>
+                                    {r.comment && <p>{r.comment}</p>}
+                                    <button
+                                        onClick={() => handleDelete(i)}
+                                        style={{
+                                            background: "#ff4d4f",
+                                            color: "#fff",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            padding: "0.3rem 0.6rem",
+                                            cursor: "pointer",
+                                            marginTop: "0.5rem",
+                                        }}
+                                    >
+                                        削除
+                                    </button>
+                                </div>
+                            ))}
                         </div>
-                    ))
-                )}
+                    ))}
             </section>
         </main >
     );
