@@ -15,7 +15,11 @@ export default function App() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const newData = { shopName, genre, rating, comment };
+
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString("ja-JP");
+
+        const newData = { shopName, genre, rating, comment, date: formattedDate };
 
         const exisitingData = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
 
@@ -30,6 +34,15 @@ export default function App() {
         setComment('');
         alert('記録しました！');
     };
+
+    const handledelete = (index: number) => {
+        const isConfirmed = window.confirm("この記録を削除しますか？");
+
+        if (!isConfirmed) return;
+        const upated = records.filter((_, i) => i !== index);
+        localStorage.setItem('meshiMoryData', JSON.stringify(upated));
+        setRecords(upated);
+    }
 
     return (
         <main style={{ maxWidth: "500px", margin: "3rem auto", textAlign: "center" }}>
@@ -87,10 +100,23 @@ export default function App() {
                             </h3>
                             <p>⭐ {r.rating}/5</p>
                             {r.comment && <p>{r.comment}</p>}
+                            <p>📅 {r.date || "日付なし"}</p>
+                            <button onClick={() => handledelete(i)}
+                                style={{
+                                    background: "#ff4d4f",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    padding: "0.3rem 0.6rem",
+                                    cursor: "pointer",
+                                    marginTop: "0.5rem",
+                                }}>
+                                削除
+                            </button>
                         </div>
                     ))
                 )}
             </section>
-        </main>
+        </main >
     );
 }
