@@ -8,7 +8,7 @@ export default function App() {
     const [comment, setComment] = useState('');
     const [records, setRecords] = useState<any[]>([]);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-    const [image, setImage] = useState<File>();
+    const [image, setImage] = useState<string | null>(null);
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
@@ -21,7 +21,7 @@ export default function App() {
         const today = new Date();
         const formattedDate = today.toLocaleDateString("ja-JP");
 
-        const newData = { shopName, genre, rating, comment, date: formattedDate };
+        const newData = { shopName, genre, rating, comment, date: formattedDate, image };
 
         const exisitingData = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
 
@@ -34,6 +34,7 @@ export default function App() {
         setGenre('');
         setRating(3);
         setComment('');
+        setImage(null);
         alert('記録しました！');
     };
 
@@ -86,10 +87,17 @@ export default function App() {
                 />
                 <input type="file"
                     onChange={(e) => {
-                        if (e.target.files) {
-                            setImage(e.target.files[0]);
+                        const file = e.target.files?.[0];
+                        if (!file) {
+                            return;
                         }
-                        console.log(e.target.files);
+
+                        const reader = new FileReader();
+
+                        reader.onloadend = () => {
+                            setImage(reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
                     }}
                 >
                 </input>
@@ -136,6 +144,9 @@ export default function App() {
                                     <h3>🍽️ {r.shopName}（{r.genre || "ジャンル未設定"}）</h3>
                                     <p>⭐ {r.rating}/5</p>
                                     {r.comment && <p>{r.comment}</p>}
+                                    {r.image && <div>
+                                        <img src={r.image} alt="preview img" />
+                                    </div>}
                                     <button
                                         onClick={() => handleDelete(i)}
                                         style={{
