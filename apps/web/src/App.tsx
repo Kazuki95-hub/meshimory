@@ -8,6 +8,7 @@ export default function App() {
     const [comment, setComment] = useState('');
     const [records, setRecords] = useState<any[]>([]);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    const [image, setImage] = useState<File>();
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
@@ -83,6 +84,15 @@ export default function App() {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                 />
+                <input type="file"
+                    onChange={(e) => {
+                        if (e.target.files) {
+                            setImage(e.target.files[0]);
+                        }
+                        console.log(e.target.files);
+                    }}
+                >
+                </input>
                 <button type="submit">記録する</button>
             </form>
             <button onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
@@ -107,7 +117,7 @@ export default function App() {
                         } else {
                             return a < b ? 1 : -1;
                         }
-                    }) // 新しい日付が上にくるようにソート
+                    })
                     .map((date) => (
                         <div key={date}>
                             <h2 style={{ marginTop: "2rem", color: "#444" }}>📅 {date}</h2>
