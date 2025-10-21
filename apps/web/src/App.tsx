@@ -7,6 +7,7 @@ export default function App() {
     const [rating, setRating] = useState<number>(3);
     const [comment, setComment] = useState('');
     const [records, setRecords] = useState<any[]>([]);
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
@@ -84,11 +85,29 @@ export default function App() {
                 />
                 <button type="submit">記録する</button>
             </form>
+            <button onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                style={{
+                    background: "#007bff",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "6px",
+                    padding: "0.5rem 1rem",
+                    cursor: "pointer",
+                    marginTop: "2rem",
+                    marginBottom: "1rem",
+                }}> 並び順：{sortOrder === "asc" ? "古い順" : "新しい順"}
+            </button>
             {/* 🧾 一覧表示 */}
             <section>
                 <h2>これまでの記録</h2>
                 {Object.keys(groupedRecords)
-                    .sort((a, b) => (a < b ? 1 : -1)) // 新しい日付が上にくるようにソート
+                    .sort((a, b) => {
+                        if (sortOrder === "asc") {
+                            return a > b ? 1 : -1;
+                        } else {
+                            return a < b ? 1 : -1;
+                        }
+                    }) // 新しい日付が上にくるようにソート
                     .map((date) => (
                         <div key={date}>
                             <h2 style={{ marginTop: "2rem", color: "#444" }}>📅 {date}</h2>
