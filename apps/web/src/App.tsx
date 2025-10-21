@@ -8,6 +8,7 @@ export default function App() {
     const [comment, setComment] = useState('');
     const [records, setRecords] = useState<any[]>([]);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    const [image, setImage] = useState<string | null>(null);
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
@@ -20,7 +21,7 @@ export default function App() {
         const today = new Date();
         const formattedDate = today.toLocaleDateString("ja-JP");
 
-        const newData = { shopName, genre, rating, comment, date: formattedDate };
+        const newData = { shopName, genre, rating, comment, date: formattedDate, image };
 
         const exisitingData = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
 
@@ -33,6 +34,7 @@ export default function App() {
         setGenre('');
         setRating(3);
         setComment('');
+        setImage(null);
         alert('記録しました！');
     };
 
@@ -83,6 +85,22 @@ export default function App() {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                 />
+                <input type="file"
+                    onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) {
+                            return;
+                        }
+
+                        const reader = new FileReader();
+
+                        reader.onloadend = () => {
+                            setImage(reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                    }}
+                >
+                </input>
                 <button type="submit">記録する</button>
             </form>
             <button onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
@@ -107,7 +125,7 @@ export default function App() {
                         } else {
                             return a < b ? 1 : -1;
                         }
-                    }) // 新しい日付が上にくるようにソート
+                    })
                     .map((date) => (
                         <div key={date}>
                             <h2 style={{ marginTop: "2rem", color: "#444" }}>📅 {date}</h2>
@@ -126,6 +144,9 @@ export default function App() {
                                     <h3>🍽️ {r.shopName}（{r.genre || "ジャンル未設定"}）</h3>
                                     <p>⭐ {r.rating}/5</p>
                                     {r.comment && <p>{r.comment}</p>}
+                                    {r.image && <div>
+                                        <img src={r.image} alt="preview img" />
+                                    </div>}
                                     <button
                                         onClick={() => handleDelete(i)}
                                         style={{
