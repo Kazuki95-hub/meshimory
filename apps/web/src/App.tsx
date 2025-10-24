@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function App() {
     const [shopName, setShopName] = useState('');
@@ -9,6 +9,7 @@ export default function App() {
     const [records, setRecords] = useState<any[]>([]);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const [image, setImage] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
@@ -35,6 +36,9 @@ export default function App() {
         setRating(3);
         setComment('');
         setImage(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ""; // ←ここでinputの中身を手動でリセット
+        }
         alert('記録しました！');
     };
 
@@ -86,6 +90,7 @@ export default function App() {
                     onChange={(e) => setComment(e.target.value)}
                 />
                 <input type="file"
+                    ref={fileInputRef}
                     onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (!file) {
