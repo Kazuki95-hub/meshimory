@@ -8,7 +8,7 @@ export default function App() {
     const [comment, setComment] = useState('');
     const [records, setRecords] = useState<any[]>([]);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-    const [image, setImage] = useState<string | null>(null);
+    const [image, setImage] = useState<String[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
@@ -35,7 +35,7 @@ export default function App() {
         setGenre('');
         setRating(3);
         setComment('');
-        setImage(null);
+        setImage([]);
         if (fileInputRef.current) {
             fileInputRef.current.value = ""; // ←ここでinputの中身を手動でリセット
         }
@@ -89,23 +89,28 @@ export default function App() {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                 />
-                <input type="file"
+                <input
+                    type="file"
+                    multiple
                     ref={fileInputRef}
                     onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) {
-                            return;
-                        }
+                        const files = e.target.files;
+                        if (!files) return; // ← ファイルが無いときはここで抜ける
 
-                        const reader = new FileReader();
+                        // FileList → 配列化
+                        const readers = Array.from(files).map((file) => {
+                            return new Promise<string>((resolve) => {
+                                const reader = new FileReader();
 
-                        reader.onloadend = () => {
-                            setImage(reader.result as string);
-                        };
-                        reader.readAsDataURL(file);
+                                reader.onloadend = () => resolve(reader.result as string);
+                                reader.readAsDataURL(file);
+                            });
+                        });
+
+                        // 全部の画像読み込みが終わったら state にセット
+                        Promise.all(readers).then((base64Array) => setImage(base64Array));
                     }}
-                >
-                </input>
+                />
                 <button type="submit">記録する</button>
             </form>
             <button onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
@@ -149,9 +154,23 @@ export default function App() {
                                     <h3>🍽️ {r.shopName}（{r.genre || "ジャンル未設定"}）</h3>
                                     <p>⭐ {r.rating}/5</p>
                                     {r.comment && <p>{r.comment}</p>}
-                                    {r.image && <div>
-                                        <img src={r.image} alt="preview img" />
-                                    </div>}
+                                    {r.image && Array.isArray(r.image) && (
+                                        <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto" }}>
+                                            {r.image.map((imgSrc: string, j: number) => (
+                                                <img
+                                                    key={j}
+                                                    src={imgSrc}
+                                                    alt={`preview ${j}`}
+                                                    style={{
+                                                        width: "100px",
+                                                        height: "100px",
+                                                        objectFit: "cover",
+                                                        borderRadius: "8px",
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
                                     <button
                                         onClick={() => handleDelete(i)}
                                         style={{
