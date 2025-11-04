@@ -15,7 +15,7 @@ export default function AddTripForm() {
             endDate,
             records: [],
         };
-
+        console.log("追加された旅:", newTrip);
         setTripTitle('');
         setStartDate('');
         setEndDate('');
@@ -41,6 +41,7 @@ export default function AddTripForm() {
                 onChange={(e) => setEndDate(e.target.value)}
                 required
             />
+            <button type="submit">旅を追加</button>
         </form>
     )
 }

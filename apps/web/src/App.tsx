@@ -1,5 +1,6 @@
 import { existsSync } from 'fs';
 import { useEffect, useRef, useState } from 'react';
+import AddTripForm from './components/TripForm';
 
 export default function App() {
     const [shopName, setShopName] = useState('');
@@ -60,6 +61,7 @@ export default function App() {
     return (
         <main style={{ maxWidth: "500px", margin: "3rem auto", textAlign: "center" }}>
             <h1>MeshiMory 🍜</h1>
+            <AddTripForm />
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <input
                     type="text"
