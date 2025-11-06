@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Trip } from "../types/types";
 
-export default function AddTripForm() {
+type Props = {
+    onAddTrip: (trip: Trip) => void;
+};
+
+export default function AddTripForm({ onAddTrip }: Props) {
     const [tripTitle, setTripTitle] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -15,6 +19,9 @@ export default function AddTripForm() {
             endDate,
             records: [],
         };
+
+        onAddTrip(newTrip);
+
         console.log("追加された旅:", newTrip);
         setTripTitle('');
         setStartDate('');

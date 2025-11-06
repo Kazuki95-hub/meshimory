@@ -54,6 +54,12 @@ export default function App() {
         setRecords(upated);
     }
 
+    const handleAddTrip = (newTrip: Trip) => {
+        const updatedTrips = [...trips, newTrip];
+        setTrips(updatedTrips);
+        console.log("旅が追加された:", updatedTrips);
+    }
+
     const groupedRecords = records.reduce((groups: any, record) => {
         const date = record.date || "日付なし";
         if (!groups[date]) groups[date] = [];
@@ -63,7 +69,7 @@ export default function App() {
     return (
         <main style={{ maxWidth: "500px", margin: "3rem auto", textAlign: "center" }}>
             <h1>MeshiMory 🍜</h1>
-            <AddTripForm />
+            <AddTripForm onAddTrip={handleAddTrip} />
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <input
                     type="text"
