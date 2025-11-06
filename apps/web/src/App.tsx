@@ -1,5 +1,6 @@
 import { existsSync } from 'fs';
 import { useEffect, useRef, useState } from 'react';
+import { Trip } from "./types/types";
 import AddTripForm from './components/TripForm';
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const [image, setImage] = useState<String[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [trips, setTrips] = useState<Trip[]>([]);
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
