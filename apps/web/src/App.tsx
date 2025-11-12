@@ -14,6 +14,7 @@ export default function App() {
     const [image, setImage] = useState<String[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [trips, setTrips] = useState<Trip[]>([]);
+    const [selectedTripId, setSelectedTripId] = useState("");
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
@@ -73,6 +74,17 @@ export default function App() {
             <AddTripForm onAddTrip={handleAddTrip} />
             <TripList trips={trips} />
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <select
+                    value={selectedTripId}
+                    onChange={(e) => setSelectedTripId(e.target.value)}
+                    required
+                >
+                    {trips.map((trip) => (
+                        <option key={trip.id} value={trip.id}>
+                            {trip.tripTitle}
+                        </option>
+                    ))}
+                </select>
                 <input
                     type="text"
                     placeholder="店名を入力"
