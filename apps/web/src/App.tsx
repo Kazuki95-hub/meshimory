@@ -2,6 +2,7 @@ import { existsSync } from 'fs';
 import { useEffect, useRef, useState } from 'react';
 import { Trip } from "./types/types";
 import AddTripForm from './components/TripForm';
+import TripList from './components/TripList';
 
 export default function App() {
     const [shopName, setShopName] = useState('');
@@ -70,6 +71,7 @@ export default function App() {
         <main style={{ maxWidth: "500px", margin: "3rem auto", textAlign: "center" }}>
             <h1>MeshiMory 🍜</h1>
             <AddTripForm onAddTrip={handleAddTrip} />
+            <TripList trips={trips} />
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <input
                     type="text"
