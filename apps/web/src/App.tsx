@@ -31,6 +31,15 @@ export default function App() {
 
         const exisitingData = JSON.parse(localStorage.getItem('meshiMoryData') || '[]');
 
+        const updatedTrips = trips.map(trip => {
+            if (trip.id === selectedTripId) {
+                return {
+                    ...trips,
+                    records: [...trip.records, newData],
+                }
+            }
+        })
+
         //スプレッド構文
         const updated = [...exisitingData, newData];
         localStorage.setItem('meshiMoryData', JSON.stringify(updated));
